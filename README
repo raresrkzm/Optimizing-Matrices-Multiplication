@@ -1,0 +1,63 @@
+Cărăușu Nelu-Rareș-Ionuț
+341C4
+
+
+Tema 3 ASC
+
+
+I. Explicații pentru cele 3 metode:
+
+1. blas
+- această metodă folosește doar funcții din biblioteca "blas" pentru toate operațiile
+de înmulțire dintre 2 matrice (cblas_dgemm) 
+și dintre o matrice și un vector (cblas_dgemv)
+- operația de transpunere a matricei C este făcută manual 
+- matricea C este transpusă manual, deoarece este nevoie de ea în mod repetat, 
+fiind mai efient decât a o transpune în fiecare apel de funcție cblas_dgemm/cblas_dgemv
+
+2. neopt
+- această metodă folosește bucle for pentru a înmulți matricele între ele sau cu vectori
+- se face și aici transpunerea manuală a lui C
+- operațiile sunt unele clasice, neavând nimic optimizat
+
+3. opt_m
+- această metodă face câteva optimizări față de metoda neopt
+- se face transpusa lui A și se salveaza în At pentru ca 
+accesările viitoare ale elementelor lui At să fie cache-friendly
+- în bucla de N iterații, sunt folosite acumulatoare locale (sum) 
+pentru a evita accesări repetate și inutile
+
+
+II. Explicații cachegrind:
+
+
+
+III. Grafice:
+
+- pentru grafice am folosit valori ale lui N multipli de 200 până la 1000
+- am creat câte un grafic separat pentru fiecare metodă 
+și un ultim grafic care le cuprinde pe toate cele 3 metode pentru 
+a evidenția creșterea timpilor dintre ele
+
+1. blas
+- timpul de execuție crește aproape liniar în raport cu N
+- blas este foarte eficient pentru operații pe matrici de dimensiuni mari
+
+2. neopt
+- până la N = 600, timpul de execuție rămâne destul de redus, 
+având creșteri foarte mari apoi
+- este cea mai lentă metodă și este ineficientă pentru valori ale lui N > 600
+
+3. opt_m
+- optimizările manuale făcute au un efect pozitiv asupra timpilor de rulare
+- există o creștere mare a timpului de rulare de la N > 600, 
+asemănătoare cu cea de la metoda neoptimizată
+
+concluzii grafice:
+- blas e cea mai bună metodă, demonstrând că optimizările locale
+nu pot întrece o bibliotecă direct optimizată
+
+
+IV. Bucla de dimensiune N din enunț:
+- bucla aplică în mod alternativ transformările liniare Ct și C asupra vectorului x
+- scopul acestei etape este de a amplifica progresiv efectul combinat al celor două matrici
